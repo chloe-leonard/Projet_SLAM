@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User{% endblock %}
+
+{% block body %}
+    <h1>User</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ user.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ user.Nom }}</td>
+            </tr>
+            <tr>
+                <th>Prenom</th>
+                <td>{{ user.Prenom }}</td>
+            </tr>
+            <tr>
+                <th>Pseudo</th>
+                <td>{{ user.Pseudo }}</td>
+            </tr>
+            <tr>
+                <th>Bio</th>
+                <td>{{ user.Bio }}</td>
+            </tr>
+            <tr>
+                <th>Avatar</th>
+                <td>{{ user.Avatar }}</td>
+            </tr>
+            <tr>
+                <th>Mail</th>
+                <td>{{ user.mail }}</td>
+            </tr>
+            <tr>
+                <th>MotDePasse</th>
+                <td>{{ user.MotDePasse }}</td>
+            </tr>
+            <tr>
+                <th>Nb_signalement</th>
+                <td>{{ user.nbSignalement }}</td>
+            </tr>
+            <tr>
+                <th>Id_etablissement</th>
+                <td>{{ user.idEtablissement }}</td>
+            </tr>
+            <tr>
+                <th>Id_ajout_etablissement</th>
+                <td>{{ user.IdAjoutEtablissmeent }}</td>
+            </tr>
+
+        </tbody>
+    </table>
+    <br>
+    <br>
+    <div>Publications</div>
+    <br>
+
+    {% for publications in publication %}
+        <div>
+            <div>{{ publications.id }}</div>
+            <div>{{ publications.Titre }}</div>
+            <div>{{ publications.Description }}</div>
+            <div>{{ publications.DureeRetard|date('H:i:s') }}</div>
+
+            <div>{{ publications.DateHeure|date('Y-m-d H:i:s') }}</div>
+        </div>
+        <br>
+
+    {% endfor %}
+    <br>
+    <br>
+    <a href="{{ path('app_user_index') }}">back to list</a>
+
+    <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
+
+    {{ include('user/_delete_form.html.twig') }}
+{% endblock %}

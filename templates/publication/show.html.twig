@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Publication{% endblock %}
+
+{% block body %}
+    <h1>Publication</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ publication.id }}</td>
+            </tr>
+            <tr>
+                <th>Titre</th>
+                <td>{{ publication.Titre }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ publication.Description }}</td>
+            </tr>
+            <tr>
+                <th>DateHeure</th>
+                <td>{{ publication.DateHeure ? publication.DateHeure|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>DureeRetard</th>
+                <td>{{ publication.DureeRetard ? publication.DureeRetard|date('H:i:s') : '' }}</td>
+            </tr>
+            {% for image in publication.images %}
+            <tr>
+                <img src="{{ asset('photo/'~image.IDPublication.id ~ '/' ~ image.photo) }}" alt="Avatar">
+            <tr>
+            {% endfor %}
+            {% for video in publication.videos %}
+              <tr>
+                <video width="320" height="240" controls autoplay>
+                    <source src="{{ asset('videos/' ~video.IDPublication.id ~ '/' ~video.lien) }}" type='video/mp4'>
+                    Erreur lors de la lecture de la vidéo
+                </video>
+               </tr>
+            {% endfor %}
+            {% for commentaire in publication.commentaires %}
+                <tr>
+                    <th>Commentaires</th>
+                    <td>{{ commentaire.commentaire }}</td>
+                    <a href="{{ path('app_commentaire_edit', {'id': commentaire.id}) }}">edit</a>
+                </tr>
+            {% endfor %}
+            {% for hashtag in publication.hashtags %}
+            <tr>
+                <th>Hashtags</th>
+                <td>{{ hashtag.IDPublication.nom }}</td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_publication_index') }}">back to list</a>
+
+    <a href="{{ path('app_publication_edit', {'id': publication.id}) }}">edit</a>
+
+    {{ include('publication/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,4 +1,8 @@
 when@dev:
-    _errors:
-        resource: '@FrameworkBundle/Resources/config/routing/errors.xml'
-        prefix: /_error
+    errors:
+        resource: "@FrameworkBundle/Resources/config/routing/errors.xml"
+        prefix:   /_error
+
+    health_check:
+        path: /_health
+        controller: 'App\Controller\HealthController::check'

@@ -30,6 +30,8 @@ class PublicationController extends AbstractController
     {
         $publication = new Publication();
         $form = $this->createForm(PublicationType::class, $publication);
+
+       // $form = $this->createForm(PublicationType::class, $publication);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

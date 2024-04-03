@@ -2,21 +2,22 @@
 
 namespace App\Entity;
 
-use App\Repository\HashtagRepository;
+use App\Repository\SignalementPublicationRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: HashtagRepository::class)]
-class Hashtag
+#[ORM\Entity(repositoryClass: SignalementPublicationRepository::class)]
+class SignalementPublication
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 150)]
-    private ?string $Nom = null;
+    #[ORM\ManyToOne(inversedBy: 'signalementPublications')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $IDSignaleur = null;
 
-    #[ORM\ManyToOne(inversedBy: 'hashtags')]
+    #[ORM\ManyToOne(inversedBy: 'signalementPublications')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Publication $IDPublication = null;
 
@@ -25,14 +26,14 @@ class Hashtag
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getIDSignaleur(): ?User
     {
-        return $this->Nom;
+        return $this->IDSignaleur;
     }
 
-    public function setNom(string $Nom): static
+    public function setIDSignaleur(?User $IDSignaleur): static
     {
-        $this->Nom = $Nom;
+        $this->IDSignaleur = $IDSignaleur;
 
         return $this;
     }

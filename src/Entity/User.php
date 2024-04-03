@@ -11,6 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\HasLifecycleCallbacks()]
 
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -43,12 +44,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?int $nb_signalement = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $id_etablissement = null;
-
-    #[ORM\Column]
-    private ?int $Id_ajout_etablissmeent = null;
 /*
+    #[ORM\Column(nullable: true)]
+    private ?int $Id_ajout_etablissmeent = null;
+
     #[ORM\Column(type: 'string', length: 100)]
     private $resetToken;
 */
@@ -57,11 +58,39 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'IDUtilisateur', targetEntity: Commentaire::class)]
     private Collection $commentaires;
+/*
+    #[ORM\OneToOne(mappedBy: 'IDUtilisateur', cascade: ['persist', 'remove'])]
+    private ?AjoutEtablissement $ajoutEtablissement = null;
+*/
+    #[ORM\Column(type: Types::DATETIME_MUTABLE )]
+    private ?\DateTimeInterface $dateCreation = null;
+
+    #[ORM\PrePersist]
+    public function prePersist() : void
+    {
+        $this->dateCreation = new \DateTime();
+    }
+
+    #[ORM\OneToMany(mappedBy: 'IDSignaleur', targetEntity: SignalementPublication::class)]
+    private Collection $signalementPublications;
+
+    #[ORM\OneToMany(mappedBy: 'IDSignaleur', targetEntity: SignalementCompte::class)]
+    private Collection $signalementComptes;
+
+    #[ORM\OneToMany(mappedBy: 'IDUtilisateur', targetEntity: AbonnementUtilisateur::class)]
+    private Collection $abonnementUtilisateurs;
+
+    #[ORM\OneToMany(mappedBy: 'IDUtilisateur', targetEntity: AbonnementEtablissement::class)]
+    private Collection $abonnementEtablissements;
 
     public function __construct()
     {
         $this->publications = new ArrayCollection();
         $this->commentaires = new ArrayCollection();
+        $this->signalementPublications = new ArrayCollection();
+        $this->signalementComptes = new ArrayCollection();
+        $this->abonnementUtilisateurs = new ArrayCollection();
+        $this->abonnementEtablissements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -176,7 +205,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
+/*
     public function getIdAjoutEtablissmeent(): ?int
     {
         return $this->Id_ajout_etablissmeent;
@@ -188,7 +217,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
+*/
     public function getRoles(): array
     {
         return ['ROLE_USER'];
@@ -287,6 +316,155 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($commentaire->getIDUtilisateur() === $this) {
                 $commentaire->setIDUtilisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getAjoutEtablissement(): ?AjoutEtablissement
+    {
+        return $this->ajoutEtablissement;
+    }
+
+    public function setAjoutEtablissement(AjoutEtablissement $ajoutEtablissement): static
+    {
+        // set the owning side of the relation if necessary
+        if ($ajoutEtablissement->getIDUtilisateur() !== $this) {
+            $ajoutEtablissement->setIDUtilisateur($this);
+        }
+
+        $this->ajoutEtablissement = $ajoutEtablissement;
+
+        return $this;
+    }
+
+    public function getDateCreation(): ?\DateTimeInterface
+    {
+        return $this->dateCreation;
+    }
+
+    public function setDateCreation(\DateTimeInterface $dateCreation): static
+    {
+        $this->dateCreation = $dateCreation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SignalementPublication>
+     */
+    public function getSignalementPublications(): Collection
+    {
+        return $this->signalementPublications;
+    }
+
+    public function addSignalementPublication(SignalementPublication $signalementPublication): static
+    {
+        if (!$this->signalementPublications->contains($signalementPublication)) {
+            $this->signalementPublications->add($signalementPublication);
+            $signalementPublication->setIDSignaleur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSignalementPublication(SignalementPublication $signalementPublication): static
+    {
+        if ($this->signalementPublications->removeElement($signalementPublication)) {
+            // set the owning side to null (unless already changed)
+            if ($signalementPublication->getIDSignaleur() === $this) {
+                $signalementPublication->setIDSignaleur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SignalementCompte>
+     */
+    public function getSignalementComptes(): Collection
+    {
+        return $this->signalementComptes;
+    }
+
+    public function addSignalementCompte(SignalementCompte $signalementCompte): static
+    {
+        if (!$this->signalementComptes->contains($signalementCompte)) {
+            $this->signalementComptes->add($signalementCompte);
+            $signalementCompte->setIDSignaleur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSignalementCompte(SignalementCompte $signalementCompte): static
+    {
+        if ($this->signalementComptes->removeElement($signalementCompte)) {
+            // set the owning side to null (unless already changed)
+            if ($signalementCompte->getIDSignaleur() === $this) {
+                $signalementCompte->setIDSignaleur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AbonnementUtilisateur>
+     */
+    public function getAbonnementUtilisateurs(): Collection
+    {
+        return $this->abonnementUtilisateurs;
+    }
+
+    public function addAbonnementUtilisateur(AbonnementUtilisateur $abonnementUtilisateur): static
+    {
+        if (!$this->abonnementUtilisateurs->contains($abonnementUtilisateur)) {
+            $this->abonnementUtilisateurs->add($abonnementUtilisateur);
+            $abonnementUtilisateur->setIDUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAbonnementUtilisateur(AbonnementUtilisateur $abonnementUtilisateur): static
+    {
+        if ($this->abonnementUtilisateurs->removeElement($abonnementUtilisateur)) {
+            // set the owning side to null (unless already changed)
+            if ($abonnementUtilisateur->getIDUtilisateur() === $this) {
+                $abonnementUtilisateur->setIDUtilisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AbonnementEtablissement>
+     */
+    public function getAbonnementEtablissements(): Collection
+    {
+        return $this->abonnementEtablissements;
+    }
+
+    public function addAbonnementEtablissement(AbonnementEtablissement $abonnementEtablissement): static
+    {
+        if (!$this->abonnementEtablissements->contains($abonnementEtablissement)) {
+            $this->abonnementEtablissements->add($abonnementEtablissement);
+            $abonnementEtablissement->setIDUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAbonnementEtablissement(AbonnementEtablissement $abonnementEtablissement): static
+    {
+        if ($this->abonnementEtablissements->removeElement($abonnementEtablissement)) {
+            // set the owning side to null (unless already changed)
+            if ($abonnementEtablissement->getIDUtilisateur() === $this) {
+                $abonnementEtablissement->setIDUtilisateur(null);
             }
         }
 

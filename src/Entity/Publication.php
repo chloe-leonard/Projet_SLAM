@@ -35,8 +35,6 @@ class Publication
     #[ORM\OneToMany(mappedBy: 'IDPublication', targetEntity: Image::class, orphanRemoval: true)]
     private Collection $images;
 
-    #[ORM\OneToMany(mappedBy: 'IDPublication', targetEntity: Hashtag::class)]
-    private Collection $hashtags;
 
     #[ORM\OneToMany(mappedBy: 'IDPublication', targetEntity: Video::class, orphanRemoval: true)]
     private Collection $videos;
@@ -44,12 +42,16 @@ class Publication
     #[ORM\OneToMany(mappedBy: 'IDPublication', targetEntity: Commentaire::class)]
     private Collection $commentaires;
 
+    #[ORM\OneToMany(mappedBy: 'IDPublication', targetEntity: SignalementPublication::class)]
+    private Collection $signalementPublications;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
         $this->hashtags = new ArrayCollection();
         $this->videos = new ArrayCollection();
         $this->commentaires = new ArrayCollection();
+        $this->signalementPublications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -155,36 +157,6 @@ class Publication
     }
 
     /**
-     * @return Collection<int, Hashtag>
-     */
-    public function getHashtags(): Collection
-    {
-        return $this->hashtags;
-    }
-
-    public function addHashtag(Hashtag $hashtag): static
-    {
-        if (!$this->hashtags->contains($hashtag)) {
-            $this->hashtags->add($hashtag);
-            $hashtag->setIDPublication($this);
-        }
-
-        return $this;
-    }
-
-    public function removeHashtag(Hashtag $hashtag): static
-    {
-        if ($this->hashtags->removeElement($hashtag)) {
-            // set the owning side to null (unless already changed)
-            if ($hashtag->getIDPublication() === $this) {
-                $hashtag->setIDPublication(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Video>
      */
     public function getVideos(): Collection
@@ -238,6 +210,36 @@ class Publication
             // set the owning side to null (unless already changed)
             if ($commentaire->getIDPublication() === $this) {
                 $commentaire->setIDPublication(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SignalementPublication>
+     */
+    public function getSignalementPublications(): Collection
+    {
+        return $this->signalementPublications;
+    }
+
+    public function addSignalementPublication(SignalementPublication $signalementPublication): static
+    {
+        if (!$this->signalementPublications->contains($signalementPublication)) {
+            $this->signalementPublications->add($signalementPublication);
+            $signalementPublication->setIDPublication($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSignalementPublication(SignalementPublication $signalementPublication): static
+    {
+        if ($this->signalementPublications->removeElement($signalementPublication)) {
+            // set the owning side to null (unless already changed)
+            if ($signalementPublication->getIDPublication() === $this) {
+                $signalementPublication->setIDPublication(null);
             }
         }
 

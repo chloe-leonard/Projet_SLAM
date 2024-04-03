@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Categorie;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
@@ -42,6 +41,8 @@ class UserController extends AbstractController
 
             $hashedPassword = $this->passwordHasher->hashPassword($user, $user->getMotDePasse());
             $user->setMotDePasse($hashedPassword);
+            //recupere la date actuelle
+            $user->setDateCreation(new \DateTime());
 
             $entityManager->persist($user);
             $entityManager->flush();
@@ -59,7 +60,7 @@ class UserController extends AbstractController
     public function show($id, ManagerRegistry $doctrine): Response
     {
         $repository = $doctrine->getRepository(User::class);
-        //on recupere les publications de l'utilisateur dont l'id est $id
+        //on récupère les publications de l'utilisateur dont l'id est $id
         $user = $repository->find($id);
         $publications = $user->getPublications();
 
@@ -102,4 +103,6 @@ class UserController extends AbstractController
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
+
+
 }

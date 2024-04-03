@@ -19,6 +19,7 @@
                 <th>Nb_signalement</th>
                 <th>Id_etablissement</th>
                 <th>Id_ajout_etablissmeent</th>
+                <th>Date Creation</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -34,8 +35,9 @@
                 <td>{{ user.mail }}</td>
                 <td>{{ user.MotDePasse }}</td>
                 <td>{{ user.nbSignalement }}</td>
-                <td>{{ user.idEtablissement }}</td>
-                <td>{{ user.IdAjoutEtablissmeent }}</td>
+               <!-- <td>{user.idEtablissement }</td>
+                <td>{ user.IdAjoutEtablissmeent }}</td>
+                <td>{user.dateCreation ? user.dateCreation|date('Y-m-d H:i:s') : '' }</td> -->
                 <td>
                     <a href="{{ path('app_user_show', {'id': user.id}) }}">show</a>
                     <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>

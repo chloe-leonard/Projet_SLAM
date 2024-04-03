@@ -75,18 +75,41 @@ class CommentaireController extends AbstractController
     public function edit(Request $request, Commentaire $commentaire, EntityManagerInterface $em): Response
     {
 
+        $publication = $commentaire->getIDPublication();
+        $user_connected = $this->getUser();
+        $user_commmentaire = $commentaire->getIDUtilisateur();
+        $user_publication = $commentaire->getIDPublication()->getIDUtilisateur();
         $form = $this->createForm(CommentaireType::class, $commentaire);
-
         $form->handleRequest($request);
-        //on verifie si l'utilisateur connecté est celui qui a publié le commentaire ou si la publication correspondant au commentaire est la sienne
-        if($this->getUser() == $commentaire->getIDUtilisateur() || $this->getUser() == $commentaire->getIDPublication()->getIDUtilisateur()){
 
-
+        // on verifie si l'utilisateur connecté est celui qui a publié le commentaire
+        // ou si la publication correspondant au commentaire est la sienne
+        if($user_connected == $user_commmentaire|| $user_connected == $user_publication){
 
             if ($form->isSubmitted() && $form->isValid()) {
-                //on recupere le commentaire et on le modifie en gardant les id de l'utilisateur et de la publication
-                $commentaire->setCommentaire($form->get('commentaire')->getData());
 
+                $user = $this->getUser();
+
+                $commentaire->setIDUtilisateur($user);
+                $commentaire->setIDPublication($publication);
+
+                if($user)
+                {
+                    if($form->get('commentaire')->getData() != null)
+                    {
+                        $commentaire->setCommentaire($form->get('commentaire')->getData());
+                    }
+                    else
+                    {
+                        $this->addFlash('error', 'Le commentaire ne peut pas être vide');
+                        return $this->redirectToRoute('app_commentaire_index');
+                    }
+                }
+                else
+                {
+                    $this->addFlash('error', 'Vous devez être connecté pour commenter');
+                    return $this->redirectToRoute('app_login');
+                }
 
                 $em->flush();
 
@@ -97,9 +120,10 @@ class CommentaireController extends AbstractController
                 'commentaire' => $commentaire,
                 'form' => $form,
             ]);
+
         }
         else {
-            $this->addFlash('error', 'Vous ne pouvez pas modifier ce commentaire');
+            $this->addFlash('error', 'Vous ne pouvez pas modifier ce commentaire car vous n en etes pas l auteur');
             return $this->redirectToRoute('app_publication_index');
         }
 

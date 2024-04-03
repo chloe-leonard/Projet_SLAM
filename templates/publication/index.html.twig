@@ -3,47 +3,61 @@
 {% block title %}Publication index{% endblock %}
 
 {% block body %}
-    <h1>Toutes les publications</h1>
-
-
+    <h1 class="text-center">Toutes les publications</h1>
+    <br>
+    <br>
+    <br>
+    <div class="container">
         {% for publication in publications %}
-            <div style="text-align: center" >
-                <div>N° de publication : {{ publication.id }}</div>
-
-                {% for image in publication.images %}
-                <div>
-                    <img src="{{ asset('photo/'~image.IDPublication.id ~ '/' ~ image.photo) }}" alt="Avatar">
-                <div>
-                    {% endfor %}
-                    {% for video in publication.videos %}
-                <div>
-                    <video width="320" height="240" controls autoplay>
-                        <source src="{{ asset('videos/' ~video.IDPublication.id ~ '/' ~video.lien) }}" type='video/mp4'>
-                        Erreur lors de la lecture de la vidéo
-                    </video>
-                </div>
-                {% endfor %}
-
-                    <b><div>Titre :</div></b>
-                    <div>{{ publication.Titre }}</div>
-                    <b><div>Description :</div></b>
-                <div>{{ publication.Description }}</div>
-                <b><div>Date de publication :</div></b>
-                <div>{{ publication.DateHeure ? publication.DateHeure|date('Y-m-d H:i:s') : '' }}</div>
-                <b><div>Duree du retard :</div></b>
-                <div>{{ publication.DureeRetard ? publication.DureeRetard|date('H:i:s') : '' }}</div>
-                <b><div>Commentaires :</div></b>
-                {% for commentaire in publication.commentaires %}
+            <div class="card row align-items-start"> <!-- text-center-->
+<!--                <div class="col"> -->
+                    <div class="card-img-top">
+                    {% for image in publication.images %}
                     <div>
-                        <div>{{ commentaire.IDUtilisateur.pseudo }} : </div>
-                        <div>{{ commentaire.commentaire }}</div>
+                        <img src="{{ asset('photo/'~image.IDPublication.id ~ '/' ~ image.photo) }}" alt="Avatar">
                     </div>
-                {% endfor %}
+                    <div>
+                        {% endfor %}
+                        {% for video in publication.videos %}
+                    <div>
+                        <video width="320" height="240" controls autoplay>
+                            <source src="{{ asset('videos/' ~video.IDPublication.id ~ '/' ~video.lien) }}" type='video/mp4'>
+                            Erreur lors de la lecture de la vidéo
+                        </video>
+                    </div>
 
-                <div>
-                    <div><a href="{{ path('app_commentaire_new', {'id': publication.id} ) }}">Ajouter un commentaire</a></div>
-                    <div><a href="{{ path('app_publication_show', {'id': publication.id}) }}">Voir</a></div>
+                    {% endfor %}
+                    </div>
+                        <!--  </div> -->
+
+                            <!-- <b><div>Titre :</div></b>-->
+                <div class="card-body ">
+                    <h5 class="card-title">{{ publication.Titre }}</h5>
+
+                    <h6 class="card-subtitle mb-2  text-body-secondary">Retard de {{ publication.DureeRetard ? publication.DureeRetard|date('H:i:s') : '' }} publié par {{ publication.IDUtilisateur.pseudo }}</h6>
+                    <div class="card-text">
+                        <p>{{ publication.Description }}</p>
+                        <p style="color: #bbbbbb">{{ publication.DateHeure ? publication.DateHeure|date('Y-m-d H:i:s') : '' }}</p>
+                    </div>
                 </div>
+                </div>
+
+                <!--  <div class="col">-->
+                    <b>Commentaires :</b>
+                    {% for commentaire in publication.commentaires %}
+                        <div>
+                            <div>{{ commentaire.IDUtilisateur.pseudo }} : </div>
+                            <div>{{ commentaire.commentaire }}</div>
+                        </div>
+                    {% endfor %}
+                <!--  </div> -->
+                </div>
+                    <div>
+                        <a href="{{ path('app_commentaire_new', {'id': publication.id} ) }}"><button class="btn btn-primary">Ajouter un commentaire</button></a>
+                        <a href="{{ path('app_publication_show', {'id': publication.id}) }}"><button class="btn btn-info" >Voir la publication</button></a>
+                    </div>
+
+
             </div>
 
             <br>
@@ -56,12 +70,20 @@
         {% endfor %}
 
 
-    <a href="{{ path('app_publication_new') }}">Nouvelle publication</a>
+    <a href="{{ path('app_publication_new') }}"><button class="btn btn-primary">Nouvelle publication</button></a>
     <br>
     <br>
     <!--recupere l'id de l'utilisateur connecté ou publication.IDUtilisateur -->
 
-    <a href="{{ path('app_user_show', {'id' : app.user.id }) }}">Mes publications</a>
-                </div>
-            </div>
+    <a href="{{ path('app_user_show', {'id' : app.user.id }) }}"><button class="btn btn-light">Mes publications</button></a>
+
+
+
+    <style>
+        button {
+            margin: 10px;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
 {% endblock %}

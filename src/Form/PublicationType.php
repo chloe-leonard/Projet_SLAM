@@ -41,7 +41,7 @@ class PublicationType extends AbstractType
             ])
 
             // Ajoutez le champ hashtags pour sélectionner plusieurs hashtags
-/*
+
             ->add('hashtags', CollectionType::class, [
                 'entry_type' => TextType::class,
                 'allow_add' => true,
@@ -50,7 +50,7 @@ class PublicationType extends AbstractType
                 'required' => false,
                 'attr' => ['class' => 'hashtags-collection'], // Ajoutez une classe pour le CSS et le JavaScript
                 'label' => 'hashtags', // Étiquette du champ
-            ])*/
+            ])
         ;
     }
 
